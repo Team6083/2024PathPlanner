@@ -4,6 +4,11 @@
 
 package frc.robot.commands;
 
+import java.util.List;
+
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.AutoConstants;
@@ -26,7 +31,8 @@ public final class Autos {
   }
 
   public static Command goStraightFrowardAndTurnRight(Drivetain drivetain) {
-    return drivetain.followPathCommand(AutoConstants.pathGoStraightForward);
+    return new PathPlannerAuto("New Path");
+    // return PathPlannerAuto.getPathGroupFromAutoFile(AutoConstants.autoGoStraightFrowardAndTurnRight);
   }
 
   private Autos() {
