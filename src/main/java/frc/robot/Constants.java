@@ -59,5 +59,6 @@ public final class Constants {
   public static final class AutoConstants {
     public static final String pathGoStraightForward = "GoStraightForward";
     public static final String pathTurnRight = "TurnRight";
+    public static final String autoGoStraightFrowardAndTurnRight = "New Auto";
   }
 }
