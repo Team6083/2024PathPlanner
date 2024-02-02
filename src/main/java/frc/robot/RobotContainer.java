@@ -68,6 +68,7 @@ public class RobotContainer {
     autoChooser.setDefaultOption("Do Nothing", null);
     autoChooser.addOption("Forward", Autos.goStraightFroward(drivetain));
     autoChooser.addOption("TurnRight", Autos.turnRight(drivetain));
+    autoChooser.addOption("null", Autos.goStraightFrowardAndTurnRight(drivetain));
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
