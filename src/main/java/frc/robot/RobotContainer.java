@@ -7,7 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.SwerveJoystickCmd;
-import frc.robot.subsystems.Drivetain;
+import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.OneModuleSub;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
-  Drivetain drivetain = new Drivetain();;
+  Drivebase drivetain = new Drivebase();;
   OneModuleSub oneModuleSub;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed

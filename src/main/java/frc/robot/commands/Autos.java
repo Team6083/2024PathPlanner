@@ -12,25 +12,25 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.subsystems.Drivetain;
+import frc.robot.subsystems.Drivebase;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
-  Drivetain drivetain = new Drivetain();
+  Drivebase drivetain = new Drivebase();
 
   public static Command exampleAuto() {
     return Commands.sequence();
   }
 
-  public static Command goStraightFroward(Drivetain drivetain) {
+  public static Command goStraightFroward(Drivebase drivetain) {
     return drivetain.followPathCommand(AutoConstants.pathGoStraightForward);
   }
 
-  public static Command turnRight(Drivetain drivetain) {
+  public static Command turnRight(Drivebase drivetain) {
     return drivetain.followPathCommand(AutoConstants.pathTurnRight);
   }
 
-  public static Command goStraightFrowardAndTurnRight(Drivetain drivetain) {
+  public static Command goStraightFrowardAndTurnRight(Drivebase drivetain) {
     return new PathPlannerAuto("New Path");
     // return PathPlannerAuto.getPathGroupFromAutoFile(AutoConstants.autoGoStraightFrowardAndTurnRight);
   }
