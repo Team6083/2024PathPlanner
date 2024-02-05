@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DrivetainConstants;
 import frc.robot.Constants.ModuleConstants;
 
-public class Drivetain extends SubsystemBase {
+public class Drivebase extends SubsystemBase {
   /** Creates a new Drivetain. */
   private final Translation2d frontLeftLocation;
   private final Translation2d frontRightLocation;
@@ -48,7 +48,7 @@ public class Drivetain extends SubsystemBase {
 
   private final PIDController rotController = new PIDController(0.5, 0, 0);
 
-  public Drivetain() {
+  public Drivebase() {
     frontLeftLocation = new Translation2d(0.3, 0.3);
     frontRightLocation = new Translation2d(0.3, -0.3);
     backLeftLocation = new Translation2d(-0.3, 0.3);
