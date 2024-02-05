@@ -47,20 +47,20 @@ public class RobotContainer {
     drivebase = new Drivebase();
 
     // NamedCommands.registerCommand("null", getAutonomousCommand());
-    NamedCommands.registerCommand("none", null);
+    // NamedCommands.registerCommand("none", null);
 
     // Configure the trigger bindings
 
     configureBindings();
-    ;
 
     // Build an auto chooser. This will use Commands.none() as the default option.
-    autoChooser = AutoBuilder.buildAutoChooser();
+    // autoChooser = AutoBuilder.buildAutoChooser();
+    autoChooser = new SendableChooser<Command>();
 
     autoChooser.setDefaultOption("Do Nothing", null);
     autoChooser.addOption("Forward", Autos.goStraightFroward(drivebase));
     autoChooser.addOption("TurnRight", Autos.turnRight(drivebase));
-    autoChooser.addOption("null", Autos.goStraightFrowardAndTurnRight(drivebase));
+    // autoChooser.addOption("null", Autos.goStraightFrowardAndTurnRight(drivebase));
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
