@@ -4,15 +4,8 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.SwerveJoystickCmd;
-import frc.robot.subsystems.Drivebase;
-import frc.robot.subsystems.OneModuleSub;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -20,6 +13,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.Autos;
+import frc.robot.commands.SwerveJoystickCmd;
+import frc.robot.subsystems.Drivebase;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -33,8 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
-  Drivebase drivetain = new Drivebase();;
-  OneModuleSub oneModuleSub;
+  Drivebase drivebase;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController = new CommandXboxController(
@@ -48,27 +44,23 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    drivebase = new Drivebase();
+
     // NamedCommands.registerCommand("null", getAutonomousCommand());
     NamedCommands.registerCommand("none", null);
 
     // Configure the trigger bindings
 
     configureBindings();
-    SmartDashboard.putNumber("xbox_leftX", driverController.getLeftX());
-    SmartDashboard.putNumber("xbox_leftY", driverController.getLeftY());
-    SmartDashboard.putNumber("pd_voltage", pd.getVoltage());
-
-    // oneModuleSub = new OneModuleSub();
-    // oneModuleSub.setDefaultCommand(new SwerveTest2ManualCmd(oneModuleSub,
-    // driverController));
+    ;
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
 
     autoChooser.setDefaultOption("Do Nothing", null);
-    autoChooser.addOption("Forward", Autos.goStraightFroward(drivetain));
-    autoChooser.addOption("TurnRight", Autos.turnRight(drivetain));
-    autoChooser.addOption("null", Autos.goStraightFrowardAndTurnRight(drivetain));
+    autoChooser.addOption("Forward", Autos.goStraightFroward(drivebase));
+    autoChooser.addOption("TurnRight", Autos.turnRight(drivebase));
+    autoChooser.addOption("null", Autos.goStraightFrowardAndTurnRight(drivebase));
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
@@ -88,7 +80,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    drivetain.setDefaultCommand(new SwerveJoystickCmd(drivetain, driverController));
+    drivebase.setDefaultCommand(new SwerveJoystickCmd(drivebase, driverController));
   }
 
   /**

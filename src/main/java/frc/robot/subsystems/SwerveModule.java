@@ -4,16 +4,14 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
-// import com.ctre.phoenix.sensors.AbsoluteSensorRange;
-// import com.ctre.phoenix.sensors.CANCoder;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkBase.FaultID;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,7 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DrivetainConstants;
+import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.ModuleConstants;
 
 public class SwerveModule extends SubsystemBase {
@@ -38,49 +36,57 @@ public class SwerveModule extends SubsystemBase {
 
   public SwerveModule(int driveMotorChannel,
       int turningMotorChannel,
-      int turningEncoderChannelA, boolean driveInverted) {
+      int turningEncoderChannel, boolean driveInverted, double canCoderMagOffset) {
 
     driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
     turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
 
-    turningEncoder = new CANcoder(turningEncoderChannelA);
-    // turningEncoder.configAbsoluteSensorRange(AbsoluteSensorRangeValue.Signed_PlusMinusHalf);
+    turningEncoder = new CANcoder(turningEncoderChannel);
+    CANcoderConfiguration turningEncoderConfiguration = new CANcoderConfiguration();
+    turningEncoderConfiguration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+    turningEncoderConfiguration.MagnetSensor.MagnetOffset = canCoderMagOffset;
+    turningEncoder.getConfigurator().apply(turningEncoderConfiguration);
 
     driveEncoder = driveMotor.getEncoder();
 
     driveMotor.setInverted(driveInverted);
+
     turningMotor.setInverted(true);
 
-    driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 40);
-    driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 150);
-    driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 150);
+    driveMotor.setSmartCurrentLimit(10, 80);
+    driveMotor.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 40);
+    driveMotor.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus1, 150);
+    driveMotor.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus2, 150);
     driveMotor.setClosedLoopRampRate(ModuleConstants.kClosedLoopRampRate);
+
     turningMotor.setSmartCurrentLimit(20);
-    driveMotor.setClosedLoopRampRate(0.25);
 
-    driveMotor.setIdleMode(com.revrobotics.CANSparkBase.IdleMode.kBrake);
-    turningMotor.setIdleMode(com.revrobotics.CANSparkBase.IdleMode.kBrake);
+    driveMotor.setIdleMode(IdleMode.kBrake);
+    turningMotor.setIdleMode(IdleMode.kBrake);
 
-    rotController = new PIDController(ModuleConstants.kPRotController, 0, ModuleConstants.kDRotController);
+    rotController = new PIDController(ModuleConstants.kPRotController, ModuleConstants.kIRotController, ModuleConstants.kDRotController);
     rotController.enableContinuousInput(-180.0, 180.0);
 
     configDriveMotor();
-    configTurningMotor();
     driveMotor.burnFlash();
     turningMotor.burnFlash();
-    SmartDashboard.putNumber("degree", 0);
+    resetAllEncoder();
+    clearSticklyFault();
+    stopModule();
   }
 
   public void configDriveMotor() {
-    driveMotor.clearFaults();
     driveMotor.enableVoltageCompensation(ModuleConstants.kMaxModuleDriveVoltage);
+  }
+
+  public void resetAllEncoder() {
     driveEncoder.setPosition(0);
   }
 
-  public void configTurningMotor(){
+  public void clearSticklyFault() {
+    driveMotor.clearFaults();
     turningMotor.clearFaults();
   }
-
 
   public void stopModule() {
     driveMotor.set(0);
@@ -90,7 +96,7 @@ public class SwerveModule extends SubsystemBase {
   // to get the single swerveModule speed and the turning rate
   public SwerveModuleState getState() {
     return new SwerveModuleState(
-        getDriveRate(), new Rotation2d(Math.toRadians(turningEncoder.getAbsolutePosition().getValueAsDouble())));
+        getDriveRate(), new Rotation2d(Math.toRadians(getRotation())));
   }
 
   // to get the drive distance
@@ -105,62 +111,38 @@ public class SwerveModule extends SubsystemBase {
 
   // to get rotation of turning motor
   public double getRotation() {
-    return turningEncoder.getAbsolutePosition().getValueAsDouble();
+    return turningEncoder.getAbsolutePosition().getValueAsDouble() * 360.0;
   }
 
   // to the get the postion by wpi function
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        getDriveDistance(), new Rotation2d(Math.toRadians(turningEncoder.getAbsolutePosition().getValueAsDouble())));
+        getDriveDistance(), new Rotation2d(Math.toRadians(getRotation())));
   }
 
   public double[] optimizeOutputVoltage(SwerveModuleState goalState, double currentTurningDegree) {
-    SwerveModuleState optimizedState = SwerveModuleState.optimize(goalState,
-        Rotation2d.fromDegrees(currentTurningDegree));
-    double driveMotorVoltage = ModuleConstants.kDesireSpeedtoMotorVoltage * optimizedState.speedMetersPerSecond;
-    double turningMotorVoltage = rotController.calculate(currentTurningDegree, optimizedState.angle.getDegrees());
+    goalState = SwerveModuleState.optimize(goalState, Rotation2d.fromDegrees(currentTurningDegree));
+    double driveMotorVoltage = ModuleConstants.kDesireSpeedtoMotorVoltage * goalState.speedMetersPerSecond;
+    double turningMotorVoltage = rotController.calculate(currentTurningDegree, goalState.angle.getDegrees());
     double[] moduleState = { driveMotorVoltage, turningMotorVoltage };
     return moduleState;
   }
 
-  public double checkOverVoltage(double currentVoltage, double goalVoltage){
-    double error = goalVoltage-currentVoltage;
-    if(Math.abs(goalVoltage)<DrivetainConstants.kMinSpeed*ModuleConstants.kDesireSpeedtoMotorVoltage){
-      return goalVoltage;
-    }
-    if(Math.abs(error)>ModuleConstants.kLimitModuleDriveVoltage){
-      error *= ModuleConstants.kLimitModuleDriveVoltage/ModuleConstants.kMaxModuleDriveVoltage;
-      return currentVoltage+error;
-    }else{
-      return goalVoltage;
-    }
-    
-  }
-
   public void setDesiredState(SwerveModuleState desiredState) {
-    if (Math.abs(desiredState.speedMetersPerSecond) < DrivetainConstants.kMinSpeed) {
+    if (Math.abs(desiredState.speedMetersPerSecond) < DrivebaseConstants.kMinJoyStickValue) {
       stopModule();
     } else {
       var moduleState = optimizeOutputVoltage(desiredState, getRotation());
-      // moduleState[0] = checkOverVoltage(driveMotor.getOutputCurrent(), moduleState[0]);
       driveMotor.setVoltage(moduleState[0]);
       turningMotor.setVoltage(moduleState[1]);
-      SmartDashboard.putNumber(turningEncoder+"_voltage", moduleState[0]);
+      SmartDashboard.putNumber("turningEncoder_ID" + turningEncoder.getDeviceID() + "_voltage", moduleState[0]);
     }
-  }
-
-  // for one module test
-  public void setMotorPower(double driveSpd, double rotSpd) {
-    driveMotor.set(driveSpd);
-    turningMotor.set(rotSpd);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber(turningEncoder+"_current", driveMotor.getOutputCurrent());
-    SmartDashboard.putBoolean(turningEncoder+"_overcurrent", 
-    driveMotor.getFault(FaultID.kOvercurrent));
+    SmartDashboard.putNumber("turningEncoder_ID" + turningEncoder.getDeviceID() + "_degree", getRotation());
   }
 
 }

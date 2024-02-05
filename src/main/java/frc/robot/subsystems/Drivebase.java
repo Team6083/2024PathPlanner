@@ -12,7 +12,6 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -20,13 +19,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DrivetainConstants;
-import frc.robot.Constants.ModuleConstants;
+import frc.robot.Constants.DrivebaseConstants;
 
 public class Drivebase extends SubsystemBase {
   /** Creates a new Drivetain. */
@@ -41,26 +40,36 @@ public class Drivebase extends SubsystemBase {
   private final SwerveModule backRight;
 
   private final SwerveDriveKinematics kinematics;
-
   private final SwerveDriveOdometry odometry;
 
   private final AHRS gyro;
 
-  private final PIDController rotController = new PIDController(0.5, 0, 0);
+  private SwerveModuleState[] swerveModuleStates = new SwerveModuleState[4];
 
   public Drivebase() {
     frontLeftLocation = new Translation2d(0.3, 0.3);
     frontRightLocation = new Translation2d(0.3, -0.3);
-    backLeftLocation = new Translation2d(-0.3, 0.3);
+    backLeftLocation = new Translation2d(-0.3,
+        0.3);
     backRightLocation = new Translation2d(-0.3, -0.3);
 
-    frontLeft = new SwerveModule(10, 11, 5, DrivetainConstants.kFrontLeftDriveMotorInverted);
-    frontRight = new SwerveModule(15, 14, 4, DrivetainConstants.kFrontRightDriveMotorInverted);
-    backLeft = new SwerveModule(12, 13, 2, DrivetainConstants.kBackLeftDriveMotorInverted);
-    backRight = new SwerveModule(17, 16, 3, DrivetainConstants.kBackRightDriveMotorInverted);
+    frontLeft = new SwerveModule(DrivebaseConstants.kFrontLeftDriveMotorChannel,
+        DrivebaseConstants.kFrontLeftTurningMotorChannel, DrivebaseConstants.kFrontLeftTurningEncoderChannel,
+        DrivebaseConstants.kFrontLeftDriveMotorInverted, DrivebaseConstants.kFrontLeftCanCoderMagOffset);
+    frontRight = new SwerveModule(DrivebaseConstants.kFrontRightDriveMotorChannel,
+        DrivebaseConstants.kFrontRightTurningMotorChannel, DrivebaseConstants.kFrontRightTurningEncoderChannel,
+        DrivebaseConstants.kFrontRightDriveMotorInverted, DrivebaseConstants.kFrontRightCanCoderMagOffset);
+    backLeft = new SwerveModule(DrivebaseConstants.kBackLeftDriveMotorChannel,
+        DrivebaseConstants.kBackLeftTurningMotorChannel, DrivebaseConstants.kBackLeftTurningEncoderChannel,
+        DrivebaseConstants.kBackLeftDriveMotorInverted, DrivebaseConstants.kBackLeftCanCoderMagOffset);
+    backRight = new SwerveModule(DrivebaseConstants.kBackRightDriveMotorChannel,
+        DrivebaseConstants.kBackRightTurningMotorChannel, DrivebaseConstants.kBackRightTurningEncoderChannel,
+        DrivebaseConstants.kBackRightDriveMotorInverted, DrivebaseConstants.kBackRightCanCoderMagOffset);
 
-    SmartDashboard.putNumber("MaxTurningVoltage", ModuleConstants.kMaxModuleTuringVoltage);
-    SmartDashboard.putNumber("kD", ModuleConstants.kDRotController);
+    SmartDashboard.putData("frontLeft", frontLeft);
+    SmartDashboard.putData("frontRight", frontRight);
+    SmartDashboard.putData("backLeft", backLeft);
+    SmartDashboard.putData("backRight", backRight);
 
     gyro = new AHRS(Port.kMXP);
 
@@ -70,7 +79,7 @@ public class Drivebase extends SubsystemBase {
     // create the odometry
     odometry = new SwerveDriveOdometry(
         kinematics,
-        gyro.getRotation2d(),
+        getRotation2d(),
         new SwerveModulePosition[] {
             frontLeft.getPosition(),
             frontRight.getPosition(),
@@ -80,6 +89,9 @@ public class Drivebase extends SubsystemBase {
 
     // reset the gyro
     setGyroReset();
+
+    // set the swerve speed equal 0
+    drive(0, 0, 0, false);
 
     AutoBuilder.configureHolonomic(
         this::getPose2d, // Robot pose suppier
@@ -112,6 +124,11 @@ public class Drivebase extends SubsystemBase {
     gyro.reset();
   }
 
+  public Rotation2d getRotation2d() {
+    return (DrivebaseConstants.kGyroInverted) ? Rotation2d.fromDegrees(360.0 - gyro.getRotation2d().getDegrees())
+        : gyro.getRotation2d();
+  }
+
   /**
    * Method to drive the robot using joystick info.
    *
@@ -124,45 +141,35 @@ public class Drivebase extends SubsystemBase {
    *                      using the wpi function to set the speed of the swerve
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    var swerveModuleStates = kinematics.toSwerveModuleStates(
+    swerveModuleStates = kinematics.toSwerveModuleStates(
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getRotation2d())
             : new ChassisSpeeds(xSpeed, ySpeed, rot));
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DrivetainConstants.kMaxSpeed);
-
+    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DrivebaseConstants.kMaxSpeed);
     frontLeft.setDesiredState(swerveModuleStates[0]);
     frontRight.setDesiredState(swerveModuleStates[1]);
     backLeft.setDesiredState(swerveModuleStates[2]);
     backRight.setDesiredState(swerveModuleStates[3]);
-
-    SmartDashboard.putNumber("frontLeft_speed", swerveModuleStates[0].speedMetersPerSecond);
-    SmartDashboard.putNumber("frontRight_speed", swerveModuleStates[1].speedMetersPerSecond);
-    SmartDashboard.putNumber("backLeft_speed", swerveModuleStates[2].speedMetersPerSecond);
-    SmartDashboard.putNumber("backRight_speed", swerveModuleStates[3].speedMetersPerSecond);
-  }
-
-  public void testDrive(double driveSpd, double rotSpd) {
-    // frontLeft.setMotorPower(driveSpd, rotSpd);
-    // frontRight.setMotorPower(driveSpd, rotSpd);
-    // backLeft.setMotorPower(driveSpd, rotSpd);
-    backRight.setMotorPower(driveSpd, rotSpd);
   }
 
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
     odometry.update(
-        gyro.getRotation2d(),
+        getRotation2d(),
         new SwerveModulePosition[] {
             frontLeft.getPosition(),
             frontRight.getPosition(),
             backLeft.getPosition(),
             backRight.getPosition()
         });
+  }
 
-    SmartDashboard.putNumber("gyro_heading", gyro.getRotation2d().getDegrees());
-    // ModuleConstants.kDRotController = SmartDashboard.getNumber("kD",
-    // ModuleConstants.kDRotController);
-
+  public void putDashboard() {
+    SmartDashboard.putNumber("frontLeft_speed", swerveModuleStates[0].speedMetersPerSecond);
+    SmartDashboard.putNumber("frontRight_speed", swerveModuleStates[1].speedMetersPerSecond);
+    SmartDashboard.putNumber("backLeft_speed", swerveModuleStates[2].speedMetersPerSecond);
+    SmartDashboard.putNumber("backRight_speed", swerveModuleStates[3].speedMetersPerSecond);
+    SmartDashboard.putNumber("gyro_heading", getRotation2d().getDegrees() % 360.0);
   }
 
   public Pose2d getPose2d() {
@@ -197,19 +204,12 @@ public class Drivebase extends SubsystemBase {
     this.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false);
   }
 
-  // by test the different xboxController mode
-  public double PIDcontrolRot(double rightX, double rightY) {
-    double angle = Math.atan2(rightY, rightX);
-    double rotSpd = rotController.calculate(gyro.getRotation2d().getRadians(), angle);
-    return rotSpd;
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     updateOdometry();
+    putDashboard();
   }
-
 
   // auto drive
   public Command followPathCommand(String pathName) {
