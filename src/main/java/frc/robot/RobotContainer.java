@@ -39,7 +39,7 @@ public class RobotContainer {
 
   private final PowerDistribution pd = new PowerDistribution();
 
-  private final SendableChooser<Command> autoChooser;
+  private SendableChooser<Command> autoChooser;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.

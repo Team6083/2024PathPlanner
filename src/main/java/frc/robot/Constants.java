@@ -96,5 +96,9 @@ public final class Constants {
     public static final double kITranslation = 0.0;
     public static final double kDTranslation = 0.0;
     public static final double kPRotation = 2.0;
+    public static final double kIRotation = 0.0;
+    public static final double kDRotation = 0.0;
+    public static final double maxModuleSpeed = 3.0;
+    public static final double drivebaseRadius = 0.34;
   }
 }
