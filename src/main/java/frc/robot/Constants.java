@@ -41,10 +41,10 @@ public final class Constants {
     public static final int kBackRightTurningEncoderChannel = 3;
 
     // can coder magnet offset value
-    public static final double kFrontLeftCanCoderMagOffset = 0.066650;
-    public static final double kFrontRightCanCoderMagOffset = -0.442871;
-    public static final double kBackLeftCanCoderMagOffset = 0.351562;
-    public static final double kBackRightCanCoderMagOffset = -0.333740;
+    public static final double kFrontLeftCanCoderMagOffset = 0.067139;
+    public static final double kFrontRightCanCoderMagOffset = -0.451904;
+    public static final double kBackLeftCanCoderMagOffset = 0.344238;
+    public static final double kBackRightCanCoderMagOffset = -0.336914;
 
     public static final double kMaxSpeed = 5; // 7 meters per second
     public static final double kMinSpeed = 0.25;
@@ -60,7 +60,9 @@ public final class Constants {
     public static final boolean kBackLeftDriveMotorInverted = true;
     public static final boolean kBackRightDriveMotorInverted = false;
 
-    public static final boolean kGyroInverted = true; // wheather gyro is under the robot
+    public static final boolean kGyroInverted = false; // wheather gyro is under the robot
+
+    public static final double kGyroOffSet = 90.0;
   }
 
   public static final class ModuleConstants {
@@ -89,5 +91,10 @@ public final class Constants {
     public static final String pathGoStraightForward = "GoStraightForward";
     public static final String pathTurnRight = "TurnRight";
     public static final String autoGoStraightFrowardAndTurnRight = "New Auto";
+
+    public static final double kPTranslation = 2.0;
+    public static final double kITranslation = 0.0;
+    public static final double kDTranslation = 0.0;
+    public static final double kPRotation = 2.0;
   }
 }

@@ -54,8 +54,8 @@ public class RobotContainer {
     configureBindings();
 
     // Build an auto chooser. This will use Commands.none() as the default option.
-    // autoChooser = AutoBuilder.buildAutoChooser();
-    autoChooser = new SendableChooser<Command>();
+    autoChooser = AutoBuilder.buildAutoChooser();
+    // autoChooser = new SendableChooser<Command>();
 
     autoChooser.setDefaultOption("Do Nothing", null);
     autoChooser.addOption("Forward", Autos.goStraightFroward(drivebase));
