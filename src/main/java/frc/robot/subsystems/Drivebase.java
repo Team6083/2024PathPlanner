@@ -131,7 +131,7 @@ public class Drivebase extends SubsystemBase {
   }
 
   // reset gyro
-  public void resetgyro() {
+  public void resetGyro() {
     gyro.reset();
   }
 
