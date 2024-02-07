@@ -28,7 +28,7 @@ public final class Autos {
   }
 
   public static Command goStraightFrowardAndTurnRight(Drivebase drivebase) {
-    return new PathPlannerAuto(AutoConstants.autoGoStraightFrowardAndTurnRight);
+    return drivebase.followAutoCommand(AutoConstants.autoGoStraightFrowardAndTurnRight);
   }
 
   private Autos() {
