@@ -171,7 +171,7 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("backRight_speed", swerveModuleStates[3].speedMetersPerSecond);
     SmartDashboard.putNumber("gyro_heading", getRotation2d().getDegrees() % 360.0);
     SmartDashboard.putNumber("distance", frontLeft.getDriveDistance());
-]
+  }
 
   public Pose2d getPose2d() {
     return odometry.getPoseMeters();
