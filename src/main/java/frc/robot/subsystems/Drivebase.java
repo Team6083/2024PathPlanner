@@ -130,6 +130,11 @@ public class Drivebase extends SubsystemBase {
             : gyro.getRotation2d().getDegrees()));
   }
 
+  // reset gyro
+  public void resetgyro() {
+    gyro.reset();
+  }
+
   /**
    * Method to drive the robot using joystick info.
    *

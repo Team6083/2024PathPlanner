@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.GyroResetCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.Drivebase;
 
@@ -81,6 +82,7 @@ public class RobotContainer {
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     drivebase.setDefaultCommand(new SwerveJoystickCmd(drivebase, driverController));
+    driverController.back().onTrue(new GyroResetCmd(drivebase));
   }
 
   /**
