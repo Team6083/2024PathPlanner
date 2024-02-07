@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -55,10 +56,10 @@ public class RobotContainer {
     configureBindings();
 
     // Build an auto chooser. This will use Commands.none() as the default option.
-    autoChooser = AutoBuilder.buildAutoChooser();
-    // autoChooser = new SendableChooser<Command>();
+    // autoChooser = AutoBuilder.buildAutoChooser();
+    autoChooser = new SendableChooser<Command>();
 
-    autoChooser.setDefaultOption("Do Nothing", null);
+    autoChooser.setDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("Forward", Autos.goStraightFroward(drivebase));
     autoChooser.addOption("TurnRight", Autos.turnRight(drivebase));
     // autoChooser.addOption("null", Autos.goStraightFrowardAndTurnRight(drivebase));
@@ -91,6 +92,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Autos.goStraightFroward(drivebase);
+    return autoChooser.getSelected();
   }
 }
