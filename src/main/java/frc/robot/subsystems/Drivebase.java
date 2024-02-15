@@ -23,6 +23,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,13 +47,14 @@ public class Drivebase extends SubsystemBase {
 
   private final AHRS gyro;
 
+  private final Field2d field2d;
+
   private SwerveModuleState[] swerveModuleStates = new SwerveModuleState[4];
 
   public Drivebase() {
     frontLeftLocation = new Translation2d(0.3, 0.3);
     frontRightLocation = new Translation2d(0.3, -0.3);
-    backLeftLocation = new Translation2d(-0.3,
-        0.3);
+    backLeftLocation = new Translation2d(-0.3, 0.3);
     backRightLocation = new Translation2d(-0.3, -0.3);
 
     frontLeft = new SwerveModule(DrivebaseConstants.kFrontLeftDriveMotorChannel,
@@ -89,6 +91,8 @@ public class Drivebase extends SubsystemBase {
             backRight.getPosition()
         });
 
+    field2d = new Field2d();
+
     // reset the gyro
     setGyroReset();
 
@@ -101,10 +105,15 @@ public class Drivebase extends SubsystemBase {
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(AutoConstants.kPTranslation, AutoConstants.kITranslation, AutoConstants.kDTranslation), // Translation PID constants
-            new PIDConstants(AutoConstants.kPRotation, AutoConstants.kIRotation, AutoConstants.kDRotation), // Rotation PID constants
+            new PIDConstants(AutoConstants.kPTranslation, AutoConstants.kITranslation, AutoConstants.kDTranslation), // Translation
+                                                                                                                     // PID
+                                                                                                                     // constants
+            new PIDConstants(AutoConstants.kPRotation, AutoConstants.kIRotation, AutoConstants.kDRotation), // Rotation
+                                                                                                            // PID
+                                                                                                            // constants
             AutoConstants.maxModuleSpeed, // Max module speed, in m/s
-            AutoConstants.drivebaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
+            AutoConstants.drivebaseRadius, // Drive base radius in meters. Distance from robot center to furthest
+                                           // module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
         ),
         () -> {
@@ -179,11 +188,26 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("backLeft_speed", swerveModuleStates[2].speedMetersPerSecond);
     SmartDashboard.putNumber("backRight_speed", swerveModuleStates[3].speedMetersPerSecond);
     SmartDashboard.putNumber("gyro_heading", getRotation2d().getDegrees() % 360.0);
-    SmartDashboard.putNumber("distance", frontLeft.getDriveDistance());
+    SmartDashboard.putNumber("fl_distance", frontLeft.getDriveDistance());
+    SmartDashboard.putNumber("fr_distance", frontRight.getDriveDistance());
+    SmartDashboard.putNumber("bl_distance", backLeft.getDriveDistance());
+    SmartDashboard.putNumber("br_distance", backRight.getDriveDistance());
+    SmartDashboard.putNumber("vx_meters_per_second", getRobotRelativeSpeeds().vxMetersPerSecond);
+    SmartDashboard.putNumber("vy_meters_per_second", getRobotRelativeSpeeds().vyMetersPerSecond);
+    SmartDashboard.putNumber("omega_degrees_per_second",
+        getRobotRelativeSpeeds().omegaRadiansPerSecond * 180 / Math.PI);
+    SmartDashboard.putData(field2d);
   }
 
   public Pose2d getPose2d() {
     return odometry.getPoseMeters();
+  }
+
+  public void resetRobotPose() {
+    frontLeft.resetAllEncoder();
+    frontRight.resetAllEncoder();
+    backLeft.resetAllEncoder();
+    backRight.resetAllEncoder();
   }
 
   /**
@@ -218,6 +242,7 @@ public class Drivebase extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     updateOdometry();
+    field2d.setRobotPose(getPose2d());
     putDashboard();
   }
 
@@ -231,10 +256,15 @@ public class Drivebase extends SubsystemBase {
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(AutoConstants.kPTranslation, AutoConstants.kITranslation, AutoConstants.kDTranslation), // Translation PID constants
-            new PIDConstants(AutoConstants.kPRotation, AutoConstants.kIRotation, AutoConstants.kDRotation), // Rotation PID constants
+            new PIDConstants(AutoConstants.kPTranslation, AutoConstants.kITranslation, AutoConstants.kDTranslation), // Translation
+                                                                                                                     // PID
+                                                                                                                     // constants
+            new PIDConstants(AutoConstants.kPRotation, AutoConstants.kIRotation, AutoConstants.kDRotation), // Rotation
+                                                                                                            // PID
+                                                                                                            // constants
             AutoConstants.maxModuleSpeed, // Max module speed, in m/s
-            AutoConstants.drivebaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
+            AutoConstants.drivebaseRadius, // Drive base radius in meters. Distance from robot center to furthest
+                                           // module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
         ),
         () -> {
@@ -249,11 +279,47 @@ public class Drivebase extends SubsystemBase {
           }
           return false;
         },
-        this // Reference to this subsystem to set requirements
+        this // Reference to this subsystem to set requirementsme
     );
   }
 
   public Command followAutoCommand(String autoName) {
     return new PathPlannerAuto(autoName);
+  }
+
+  public Command followChoreoCommand(String choreoPathName) {
+    PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(choreoPathName);
+
+    return new FollowPathHolonomic(
+        path,
+        this::getPose2d, // Robot pose supplier
+        this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+            new PIDConstants(AutoConstants.kPTranslation, AutoConstants.kITranslation, AutoConstants.kDTranslation), // Translation
+                                                                                                                     // PID
+                                                                                                                     // constants
+            new PIDConstants(AutoConstants.kPRotation, AutoConstants.kIRotation, AutoConstants.kDRotation), // Rotation
+                                                                                                            // PID
+                                                                                                            // constants
+            AutoConstants.maxModuleSpeed, // Max module speed, in m/s
+            AutoConstants.drivebaseRadius, // Drive base radius in meters. Distance from robot center to furthest
+                                           // module.
+            new ReplanningConfig() // Default path replanning config. See the API for the options here
+        ),
+        () -> {
+          // Boolean supplier that controls when the path will be mirrored for the red
+          // alliance
+          // This will flip the path being followed to the red side of the field.
+          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+          }
+          return false;
+        },
+        this // Reference to this subsystem to set requirementsme
+    );
   }
 }
