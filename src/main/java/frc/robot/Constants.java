@@ -41,12 +41,12 @@ public final class Constants {
     public static final int kBackRightTurningEncoderChannel = 3;
 
     // can coder magnet offset value
-    public static final double kFrontLeftCanCoderMagOffset = 0.067139;
-    public static final double kFrontRightCanCoderMagOffset = -0.451904;
-    public static final double kBackLeftCanCoderMagOffset = 0.344238;
-    public static final double kBackRightCanCoderMagOffset = -0.336914;
+    public static final double kFrontLeftCanCoderMagOffset = -0.060303 ;
+    public static final double kFrontRightCanCoderMagOffset = -0.458984 ;
+    public static final double kBackLeftCanCoderMagOffset = 0.357666 ;
+    public static final double kBackRightCanCoderMagOffset = -0.347900 ;
 
-    public static final double kMaxSpeed = 5; // 7 meters per second
+    public static final double kMaxSpeed = 5;
     public static final double kMinSpeed = 0.25;
     public static final double kMinJoyStickValue = 0.3;
     public static final double kMaxAngularSpeed = 2.5 * Math.PI; // 1/2 rotation per second
@@ -70,11 +70,10 @@ public final class Constants {
 
     public static final double kWheelDiameterMeters = 0.15;
 
-    public static final double kLimitModuleDriveVoltage = 7.0;
-
     public static final double kMaxModuleDriveVoltage = 12.0;
 
-    public static final double kClosedLoopRampRate = 0.25;// 1 second 1 unit
+    public static final double kClosedLoopRampRate = 0.8;// 1 second 1 unit
+    public static final double kTurningClosedLoopRampRate = 0.25;
 
     public static final double kDesireSpeedtoMotorVoltage = kMaxModuleDriveVoltage / DrivebaseConstants.kMaxSpeed;
 
@@ -90,7 +89,10 @@ public final class Constants {
   public static final class AutoConstants {
     public static final String pathGoStraightForward = "GoStraightForward";
     public static final String pathTurnRight = "TurnRight";
+
     public static final String autoGoStraightFrowardAndTurnRight = "New Auto";
+
+    public static final String choreoGoStraightForward = "goStraightForward";
 
     public static final double kPTranslation = 2.0;
     public static final double kITranslation = 0.0;
