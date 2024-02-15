@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.AutoConstants;
@@ -29,6 +27,10 @@ public final class Autos {
 
   public static Command goStraightFrowardAndTurnRight(Drivebase drivebase) {
     return drivebase.followAutoCommand(AutoConstants.autoGoStraightFrowardAndTurnRight);
+  }
+
+  public static Command choreoGoStraightForward(Drivebase drivebase) {
+    return drivebase.followChoreoCommand(AutoConstants.choreoGoStraightForward);
   }
 
   private Autos() {
