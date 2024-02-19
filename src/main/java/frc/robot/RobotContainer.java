@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.GyroResetCmd;
+import frc.robot.commands.RobotPoseReset;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.Drivebase;
 
@@ -56,8 +57,8 @@ public class RobotContainer {
     configureBindings();
 
     // Build an auto chooser. This will use Commands.none() as the default option.
-    // autoChooser = AutoBuilder.buildAutoChooser();
-    autoChooser = new SendableChooser<Command>();
+    autoChooser = AutoBuilder.buildAutoChooser();
+    //autoChooser = new SendableChooser<Command>();
 
     autoChooser.setDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("Forward", Autos.goStraightFroward(drivebase));
@@ -85,6 +86,8 @@ public class RobotContainer {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     drivebase.setDefaultCommand(new SwerveJoystickCmd(drivebase, driverController));
     driverController.back().onTrue(new GyroResetCmd(drivebase));
+    driverController.start().onTrue(new RobotPoseReset(drivebase));
+    
   }
 
   /**
