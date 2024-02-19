@@ -41,10 +41,10 @@ public final class Constants {
     public static final int kBackRightTurningEncoderChannel = 3;
 
     // can coder magnet offset value
-    public static final double kFrontLeftCanCoderMagOffset = -0.060303 ;
-    public static final double kFrontRightCanCoderMagOffset = -0.458984 ;
-    public static final double kBackLeftCanCoderMagOffset = 0.357666 ;
-    public static final double kBackRightCanCoderMagOffset = -0.347900 ;
+    public static final double kFrontLeftCanCoderMagOffset = -0.073486 ;
+    public static final double kFrontRightCanCoderMagOffset = -0.452637 ;
+    public static final double kBackLeftCanCoderMagOffset = 0.348145  ;
+    public static final double kBackRightCanCoderMagOffset = -0.339111  ;
 
     public static final double kMaxSpeed = 5;
     public static final double kMinSpeed = 0.25;
@@ -60,7 +60,7 @@ public final class Constants {
     public static final boolean kBackLeftDriveMotorInverted = true;
     public static final boolean kBackRightDriveMotorInverted = false;
 
-    public static final boolean kGyroInverted = false; // wheather gyro is under the robot
+    public static final boolean kGyroInverted = true; // wheather gyro is under the robot
 
     public static final double kGyroOffSet = 90.0;
   }
