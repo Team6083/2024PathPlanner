@@ -284,9 +284,9 @@ public class Drivebase extends SubsystemBase {
     );
   }
 
-  public Command followAutoCommand(String autoName) {
-    return new PathPlannerAuto(autoName);
-  }
+  // public Command followAutoCommand(String autoName) {
+  //   return new PathPlannerAuto(autoName);
+  // }
 
   public Command followChoreoCommand(String choreoPathName) {
     PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(choreoPathName);
