@@ -25,9 +25,9 @@ public final class Autos {
     return drivebase.followPathCommand(AutoConstants.pathTurnRight);
   }
 
-  public static Command goStraightFrowardAndTurnRight(Drivebase drivebase) {
-    return drivebase.followAutoCommand(AutoConstants.autoGoStraightFrowardAndTurnRight);
-  }
+  // public static Command goStraightFrowardAndTurnRight(Drivebase drivebase) {
+  //   return drivebase.followAutoCommand(AutoConstants.autoGoStraightFrowardAndTurnRight);
+  // }
 
   public static Command choreoGoStraightForward(Drivebase drivebase) {
     return drivebase.followChoreoCommand(AutoConstants.choreoGoStraightForward);
