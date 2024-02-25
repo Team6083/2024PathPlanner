@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.EncoderResetCmd;
+// import frc.robot.commands.EncoderResetCmd;
 import frc.robot.commands.GyroResetCmd;
 import frc.robot.commands.RobotPoseReset;
 import frc.robot.commands.SwerveJoystickCmd;
@@ -48,6 +50,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
     drivebase = new Drivebase();
+    drivebase.init();
 
     NamedCommands.registerCommand("GyroReset", new GyroResetCmd(drivebase));
     // NamedCommands.registerCommand("none", null);
@@ -58,12 +61,13 @@ public class RobotContainer {
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
-    //autoChooser = new SendableChooser<Command>();
+    // autoChooser = new SendableChooser<Command>();
 
     autoChooser.setDefaultOption("Do Nothing", Commands.none());
     autoChooser.addOption("Forward", Autos.goStraightFroward(drivebase));
     autoChooser.addOption("TurnRight", Autos.turnRight(drivebase));
-    // autoChooser.addOption("Combine", Autos.goStraightFrowardAndTurnRight(drivebase));
+    // autoChooser.addOption("Combine",
+    // Autos.goStraightFrowardAndTurnRight(drivebase));
     autoChooser.addOption(("Choreo Forward"), Autos.choreoGoStraightForward(drivebase));
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -87,7 +91,7 @@ public class RobotContainer {
     drivebase.setDefaultCommand(new SwerveJoystickCmd(drivebase, driverController));
     driverController.back().onTrue(new GyroResetCmd(drivebase));
     driverController.start().onTrue(new RobotPoseReset(drivebase));
-    
+    // driverController.y().onTrue(new EncoderResetCmd(drivebase));
   }
 
   /**

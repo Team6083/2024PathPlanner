@@ -24,7 +24,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "TurnRight"
+                  "pathName": "GoStraightForward"
                 }
               }
             ]
@@ -37,12 +37,6 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "GoStraightForward"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
                   "pathName": "TurnRight"
                 }
               }
@@ -52,6 +46,6 @@
       ]
     }
   },
-  "folder": "New Folder",
+  "folder": null,
   "choreoAuto": false
 }

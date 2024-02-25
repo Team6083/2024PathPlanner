@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 
-import com.kauailabs.navx.frc.AHRS;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -21,7 +21,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -44,7 +43,8 @@ public class Drivebase extends SubsystemBase {
   private final SwerveDriveKinematics kinematics;
   private final SwerveDriveOdometry odometry;
 
-  private final AHRS gyro;
+  // private final AHRS gyro
+  private final Pigeon2 gyro;
 
   private final Field2d field2d;
 
@@ -74,7 +74,8 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putData("backLeft", backLeft);
     SmartDashboard.putData("backRight", backRight);
 
-    gyro = new AHRS(Port.kMXP);
+    // gyro = new AHRS(Port.kMXP);
+    gyro = new Pigeon2(30);
 
     kinematics = new SwerveDriveKinematics(
         frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
@@ -91,6 +92,7 @@ public class Drivebase extends SubsystemBase {
         });
 
     field2d = new Field2d();
+    field2d.setRobotPose(2, 7, getRotation2d());
 
     // reset the gyro
     setGyroReset();
@@ -130,6 +132,14 @@ public class Drivebase extends SubsystemBase {
     );
   }
 
+  public void init() {
+    resetGyro();
+    frontLeft.init();
+    frontRight.init();
+    backLeft.init();
+    backRight.init();
+  }
+
   public void setGyroReset() {
     gyro.reset();
   }
@@ -144,6 +154,8 @@ public class Drivebase extends SubsystemBase {
   public void resetGyro() {
     gyro.reset();
   }
+
+  // public void
 
   /**
    * Method to drive the robot using joystick info.
@@ -187,7 +199,7 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("backLeft_speed", swerveModuleStates[2].speedMetersPerSecond);
     SmartDashboard.putNumber("backRight_speed", swerveModuleStates[3].speedMetersPerSecond);
     SmartDashboard.putNumber("gyro_heading", getRotation2d().getDegrees() % 360.0);
-    SmartDashboard.putBoolean("gyro_isConnected", gyro.isConnected());
+    // SmartDashboard.putBoolean("gyro_isConnected", gyro.isConnected());
     SmartDashboard.putNumber("fl_distance", frontLeft.getDriveDistance());
     SmartDashboard.putNumber("fr_distance", frontRight.getDriveDistance());
     SmartDashboard.putNumber("bl_distance", backLeft.getDriveDistance());
@@ -196,7 +208,11 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("vy_meters_per_second", getRobotRelativeSpeeds().vyMetersPerSecond);
     SmartDashboard.putNumber("omega_degrees_per_second",
         getRobotRelativeSpeeds().omegaRadiansPerSecond * 180 / Math.PI);
+    SmartDashboard.putNumber("pose x", odometry.getPoseMeters().getX());
+    SmartDashboard.putNumber("pose y", odometry.getPoseMeters().getY());
+    SmartDashboard.putNumber("pose rot", odometry.getPoseMeters().getRotation().getDegrees());
     SmartDashboard.putData(field2d);
+
   }
 
   public Pose2d getPose2d() {
@@ -236,6 +252,14 @@ public class Drivebase extends SubsystemBase {
 
   public void driveRobotRelative(ChassisSpeeds speeds) {
     drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false);
+  }
+
+  public void resetPoseDAndEncoder() {
+    frontLeft.resetAllEncoder();
+    frontRight.resetAllEncoder();
+    backLeft.resetAllEncoder();
+    backRight.resetAllEncoder();
+    resetPose(new Pose2d(0, 0, new Rotation2d(0)));
   }
 
   @Override
@@ -284,7 +308,7 @@ public class Drivebase extends SubsystemBase {
   }
 
   // public Command followAutoCommand(String autoName) {
-  //   return new PathPlannerAuto(autoName);
+  // return new PathPlannerAuto(autoName);
   // }
 
   public Command followChoreoCommand(String choreoPathName) {
@@ -321,5 +345,12 @@ public class Drivebase extends SubsystemBase {
         },
         this // Reference to this subsystem to set requirementsme
     );
+  }
+
+  public void resetAllTurningEncoder() {
+    backLeft.resetTurningEncoder();
+    backRight.resetTurningEncoder();
+    frontLeft.resetTurningEncoder();
+    frontRight.resetTurningEncoder();
   }
 }

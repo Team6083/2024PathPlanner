@@ -7,13 +7,13 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivebase;
 
-public class RobotPoseReset extends Command {
-  /** Creates a new RobotPoseReset. */
-  private final Drivebase drivebase;
+public class EncoderResetCmd extends Command {
+  Drivebase drivebase;
 
-  public RobotPoseReset(Drivebase drivebase) {
+  /** Creates a new EncoderResetCnd. */
+  public EncoderResetCmd(Drivebase drivebase) {
     this.drivebase = drivebase;
-    addRequirements(this.drivebase);
+    addRequirements(drivebase);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -25,7 +25,7 @@ public class RobotPoseReset extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drivebase.resetRobotPose();
+    drivebase.resetAllTurningEncoder();
   }
 
   // Called once the command ends or is interrupted.
