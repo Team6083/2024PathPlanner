@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.EncoderResetCmd;
-// import frc.robot.commands.EncoderResetCmd;
 import frc.robot.commands.GyroResetCmd;
 import frc.robot.commands.RobotPoseReset;
 import frc.robot.commands.SwerveJoystickCmd;

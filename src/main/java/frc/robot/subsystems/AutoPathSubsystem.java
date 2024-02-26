@@ -24,25 +24,36 @@ public class AutoPathSubsystem extends SubsystemBase {
 
   }
 
-  public void pathOnFly(Pose2d... pose) {
-    // Create a list of bezier points from poses. Each pose represents one waypoint.
-    // The rotation component of the pose should be the direction of travel. Do not
-    // use holonomic rotation.
+  /**
+   * @param maxVelocity            Max Velociry Mps
+   * @param maxAcceleration        Max Acceleration MpsSq
+   * @param maxAngularVelocity     Max Angular Velocity Rps
+   * @param maxAngularAcceleration Max Angular Acceleration RpsSq
+   * @param goalEndVelocity        Goal end velocity in meters/sec
+   * @param goalEndDegrees         Goal end degrees
+   * @param preventFlipping        Prevent the path from being flipped if the
+   *                               coordinates are already correct
+   * @param pose                   Create a list of bezier points from poses. Each
+   *                               pose represents one waypoint.
+   *                               The rotation component of the pose should be
+   *                               the direction of travel. Do not
+   *                               use holonomic rotation.
+   */
+
+  public PathPlannerPath pathOnFly(double maxVelocity, double maxAcceleration, double maxAngularVelocity,
+      double maxAngularAcceleration, double goalEndVelocity, double goalEndDegrees, boolean preventFlipping,
+      Pose2d... pose) {
+
     List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(pose);
 
-    // Create the path using the bezier points created above
     PathPlannerPath path = new PathPlannerPath(
         bezierPoints,
-        new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a
-                                                                 // differential drivetrain, the angular constraints
-                                                                 // have no effect.
-        new GoalEndState(0.0, Rotation2d.fromDegrees(-90)) // Goal end state. You can set a holonomic rotation here. If
-                                                           // using a differential drivetrain, the rotation will have no
-                                                           // effect.
-    );
+        new PathConstraints(maxVelocity, maxAcceleration,
+            Units.degreesToRadians(maxAngularVelocity), Units.degreesToRadians(maxAngularAcceleration)),
+        new GoalEndState(goalEndVelocity, Rotation2d.fromDegrees(goalEndDegrees)));
 
-    // Prevent the path from being flipped if the coordinates are already correct
-    path.preventFlipping = true;
+    path.preventFlipping = preventFlipping;
+    return path;
   }
 
   /**
@@ -63,7 +74,8 @@ public class AutoPathSubsystem extends SubsystemBase {
       double rotationDelayDistance) {
 
     Pose2d targetPose = new Pose2d(x, y, Rotation2d.fromDegrees(degrees));
-    PathConstraints constraints = new PathConstraints(maxVelocity, maxAcceleration,
+    PathConstraints constraints = new PathConstraints(
+        maxVelocity, maxAcceleration,
         Units.degreesToRadians(maxAngularVelocity), Units.degreesToRadians(maxAngularAcceleration));
     return AutoBuilder.pathfindToPose(targetPose, constraints, goalEndVelocity, rotationDelayDistance);
   }
@@ -82,7 +94,8 @@ public class AutoPathSubsystem extends SubsystemBase {
       double maxAngularVelocity, double maxAngularAcceleration, double rotationDelayDistance) {
 
     PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-    PathConstraints constraints = new PathConstraints(maxVelocity, maxAcceleration,
+    PathConstraints constraints = new PathConstraints(
+        maxVelocity, maxAcceleration,
         Units.degreesToRadians(maxAngularVelocity), Units.degreesToRadians(maxAcceleration));
     return AutoBuilder.pathfindThenFollowPath(path, constraints, rotationDelayDistance);
   }
