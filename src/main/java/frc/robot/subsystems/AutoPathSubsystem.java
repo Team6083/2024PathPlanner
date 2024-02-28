@@ -92,7 +92,6 @@ public class AutoPathSubsystem extends SubsystemBase {
    */
   public Command pathFindingThenFollowPath(String pathName, double maxVelocity, double maxAcceleration,
       double maxAngularVelocity, double maxAngularAcceleration, double rotationDelayDistance) {
-
     PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
     PathConstraints constraints = new PathConstraints(
         maxVelocity, maxAcceleration,

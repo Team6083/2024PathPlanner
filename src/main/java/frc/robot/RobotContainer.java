@@ -18,7 +18,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.EncoderResetCmd;
 import frc.robot.commands.GyroResetCmd;
-import frc.robot.commands.RobotPoseReset;
+import frc.robot.commands.PoseResetCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.Drivebase;
 
@@ -88,9 +88,16 @@ public class RobotContainer {
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     drivebase.setDefaultCommand(new SwerveJoystickCmd(drivebase, driverController));
-    driverController.back().onTrue(new GyroResetCmd(drivebase));
-    driverController.start().onTrue(new RobotPoseReset(drivebase));
+    var gyroResetCmd = new GyroResetCmd(drivebase);
+    var poseResetCmd = new PoseResetCmd(drivebase);
+    driverController.back().onTrue(gyroResetCmd);
+    driverController.start().onTrue(poseResetCmd);
     // driverController.y().onTrue(new EncoderResetCmd(drivebase));
+
+    SmartDashboard.putBoolean("reset_pose", false);
+    SmartDashboard.putBoolean("reset_gyro", false);
+    SmartDashboard.putData(gyroResetCmd);
+    SmartDashboard.putData(poseResetCmd);
   }
 
   /**

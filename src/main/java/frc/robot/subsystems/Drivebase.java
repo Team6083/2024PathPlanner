@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DrivebaseConstants;
 
@@ -113,8 +114,8 @@ public class Drivebase extends SubsystemBase {
                                                                                                             // PID
                                                                                                             // constants
             AutoConstants.maxModuleSpeed, // Max module speed, in m/s
-            AutoConstants.drivebaseRadius, // Drive base radius in meters. Distance from robot center to furthest
-                                           // module.
+            frontLeftLocation.getNorm(), // Drive base radius in meters. Distance from robot center to furthest
+                                         // module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
         ),
         () -> {
@@ -146,7 +147,8 @@ public class Drivebase extends SubsystemBase {
 
   public Rotation2d getRotation2d() {
     return Rotation2d.fromDegrees(DrivebaseConstants.kGyroOffSet
-        + ((DrivebaseConstants.kGyroInverted) ? (360.0 - gyro.getRotation2d().getDegrees())
+        + ((DrivebaseConstants.kGyroInverted) ? (360.0 -
+            gyro.getRotation2d().getDegrees())
             : gyro.getRotation2d().getDegrees()));
   }
 
@@ -251,10 +253,10 @@ public class Drivebase extends SubsystemBase {
   }
 
   public void driveRobotRelative(ChassisSpeeds speeds) {
-    drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false);
+    drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, -speeds.omegaRadiansPerSecond, false);
   }
 
-  public void resetPoseDAndEncoder() {
+  public void resetPose2dAndEncoder() {
     frontLeft.resetAllEncoder();
     frontRight.resetAllEncoder();
     backLeft.resetAllEncoder();
@@ -268,6 +270,7 @@ public class Drivebase extends SubsystemBase {
     updateOdometry();
     field2d.setRobotPose(getPose2d());
     putDashboard();
+  
   }
 
   // auto drive
