@@ -93,7 +93,6 @@ public class Drivebase extends SubsystemBase {
         });
 
     field2d = new Field2d();
-    field2d.setRobotPose(2, 7, getRotation2d());
 
     // reset the gyro
     setGyroReset();
