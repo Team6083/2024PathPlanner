@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DrivebaseConstants;
+import frc.robot.Constants.FieldConstants;
 
 public class Drivebase extends SubsystemBase {
   /** Creates a new Drivetain. */
@@ -263,13 +264,22 @@ public class Drivebase extends SubsystemBase {
     resetPose(new Pose2d(0, 0, new Rotation2d(0)));
   }
 
+  public double calShooterAngleByPose2d() {
+    double x = getPose2d().getX();
+    double y = getPose2d().getY();
+    double distance = Math.sqrt(x * x + y * y);
+    double backAngleDegree = Math.toDegrees(Math.atan((FieldConstants.speakerBackTall-32.464) / distance));
+    double frontAngleDegree = Math.toDegrees(Math.atan((FieldConstants.speakerFrontTall-32.464) / distance));
+    return (backAngleDegree + frontAngleDegree) / 2;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     updateOdometry();
     field2d.setRobotPose(getPose2d());
     putDashboard();
-  
+
   }
 
   // auto drive
