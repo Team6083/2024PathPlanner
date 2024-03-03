@@ -3,9 +3,12 @@
   "robotLength": 0.68,
   "holonomicMode": true,
   "pathFolders": [
-    "linked position",
     "Test",
-    "final midline"
+    "left bottom to note",
+    "left top to note",
+    "relay points to shoot position",
+    "right bottom to note",
+    "right top to note"
   ],
   "autoFolders": [
     "Test"

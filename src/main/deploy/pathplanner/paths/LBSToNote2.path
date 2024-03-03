@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.63,
-        "y": 0.75
+        "x": 2.0,
+        "y": 3.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.629999999999999,
-        "y": 0.75
+        "x": 1.7284734569469153,
+        "y": 3.483030812215471
       },
-      "isLocked": true,
-      "linkedName": "Note8"
+      "isLocked": false,
+      "linkedName": "LeftBottomShoot"
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 6.0
+        "x": 2.1922197690549243,
+        "y": 5.515621031242063
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 6.0
+        "x": 1.7580742853793419,
+        "y": 5.259080518161037
       },
       "nextControl": null,
       "isLocked": false,
@@ -43,9 +43,9 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "linked position",
+  "folder": "left bottom to note",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": -44.81999999999999,
     "velocity": 0
   },
   "useDefaultConstraints": true

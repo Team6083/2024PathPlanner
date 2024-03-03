@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 5.5,
+        "y": 6.75
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 7.0
+        "x": 3.66239424786542,
+        "y": 5.821496258377133
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "RightTopShoot"
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 6.0
+        "x": 2.093550340946837,
+        "y": 4.144115980539654
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 6.0
+        "x": 2.5868974814872723,
+        "y": 5.3972177175123575
       },
       "nextControl": null,
       "isLocked": false,
@@ -43,9 +43,9 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "left top to note",
+  "folder": "right top to note",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 12.25,
     "velocity": 0
   },
   "useDefaultConstraints": true

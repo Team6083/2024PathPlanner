@@ -24,7 +24,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "GoStraightForward"
+                  "pathName": null
                 }
               }
             ]
@@ -37,7 +37,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "TurnRight"
+                  "pathName": null
                 }
               }
             ]
