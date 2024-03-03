@@ -66,11 +66,11 @@ public class RobotContainer {
     // autoChooser = new SendableChooser<Command>();
 
     autoChooser.setDefaultOption("Do Nothing", Commands.none());
-    autoChooser.addOption("Forward", Autos.goStraightFroward(drivebase));
-    autoChooser.addOption("TurnRight", Autos.turnRight(drivebase));
+    // autoChooser.addOption("Forward", Autos.goStraightFroward(drivebase));
+    // autoChooser.addOption("TurnRight", Autos.turnRight(drivebase));
     // autoChooser.addOption("Combine",
     // Autos.goStraightFrowardAndTurnRight(drivebase));
-    autoChooser.addOption(("Choreo Forward"), Autos.choreoGoStraightForward(drivebase));
+    // autoChooser.addOption(("Choreo Forward"), Autos.choreoGoStraightForward(drivebase));
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 

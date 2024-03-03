@@ -98,12 +98,12 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final String pathGoStraightForward = "GoStraightForward";
-    public static final String pathTurnRight = "TurnRight";
+    // public static final String pathGoStraightForward = "GoStraightForward";
+    // public static final String pathTurnRight = "TurnRight";
 
     // public static final String autoGoStraightFrowardAndTurnRight = "New Auto";
 
-    public static final String choreoGoStraightForward = "goStraightForward";
+    // public static final String choreoGoStraightForward = "goStraightForward";
 
     public static final double kPTranslation = 2.0;
     public static final double kITranslation = 0.001;
