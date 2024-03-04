@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.nio.file.Path;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -148,8 +150,14 @@ public final class Constants {
     public static final double kPRotation = 2.0;
     public static final double kIRotation = 0.001;
     public static final double kDRotation = 0.01;
-    public static final double maxModuleSpeed = 2.5;
+    public static final double maxModuleSpeed = 3.36;
     public static final double drivebaseRadius = 2.17;
+
+    public static final double kMaxVelocity = 3.36;
+    public static final double kMaxAcceleration = 3.36;
+    public static final double kMaxAngularVelocity = 453.38;
+    public static final double kMaxAngularAcceleration = 453.38;
+    public static final double rotationDelayDistance = 0.0;
 
     public static final Pose2d leftPose2d = new Pose2d(0.76, 6.53, Rotation2d.fromDegrees(60));
     public static final Pose2d middlePose2d = new Pose2d(1.24, 5.5, Rotation2d.fromDegrees(0));

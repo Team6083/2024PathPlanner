@@ -366,6 +366,17 @@ public class Drivebase extends SubsystemBase {
     );
   }
 
+  public Command pathFindingToPose(double x, double y, double degrees, double maxVelocity, double maxAcceleration,
+      double maxAngularVelocity, double maxAngularAcceleration, double goalEndVelocity,
+      double rotationDelayDistance) {
+
+    Pose2d targetPose = new Pose2d(x, y, Rotation2d.fromDegrees(degrees));
+    PathConstraints constraints = new PathConstraints(
+        maxVelocity, maxAcceleration,
+        Units.degreesToRadians(maxAngularVelocity), Units.degreesToRadians(maxAngularAcceleration));
+    return AutoBuilder.pathfindToPose(targetPose, constraints, goalEndVelocity, rotationDelayDistance);
+  }
+
   public void resetAllTurningEncoder() {
     backLeft.resetTurningEncoder();
     backRight.resetTurningEncoder();

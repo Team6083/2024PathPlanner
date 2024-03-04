@@ -6,9 +6,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class ShootCmd extends Command {
-  /** Creates a new shootCmd. */
-  public ShootCmd() {
+public class IntakeCmd extends Command {
+  /** Creates a new IntakeCmd. */
+  public IntakeCmd() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

@@ -3,6 +3,7 @@
   "robotLength": 0.68,
   "holonomicMode": true,
   "pathFolders": [
+    "New Folder",
     "Test",
     "left bottom to note",
     "left top to note",
