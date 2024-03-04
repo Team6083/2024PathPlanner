@@ -95,7 +95,7 @@ public class AutoPathSubsystem extends SubsystemBase {
     PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
     PathConstraints constraints = new PathConstraints(
         maxVelocity, maxAcceleration,
-        Units.degreesToRadians(maxAngularVelocity), Units.degreesToRadians(maxAcceleration));
+        Units.degreesToRadians(maxAngularVelocity), Units.degreesToRadians(maxAngularAcceleration));
     return AutoBuilder.pathfindThenFollowPath(path, constraints, rotationDelayDistance);
   }
 

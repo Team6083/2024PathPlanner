@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -20,6 +21,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -268,8 +270,8 @@ public class Drivebase extends SubsystemBase {
     double x = getPose2d().getX();
     double y = getPose2d().getY();
     double distance = Math.sqrt(x * x + y * y);
-    double backAngleDegree = Math.toDegrees(Math.atan((FieldConstants.speakerBackTall-32.464) / distance));
-    double frontAngleDegree = Math.toDegrees(Math.atan((FieldConstants.speakerFrontTall-32.464) / distance));
+    double backAngleDegree = Math.toDegrees(Math.atan((FieldConstants.speakerBackTall - 32.464) / distance));
+    double frontAngleDegree = Math.toDegrees(Math.atan((FieldConstants.speakerFrontTall - 32.464) / distance));
     return (backAngleDegree + frontAngleDegree) / 2;
   }
 
@@ -319,9 +321,14 @@ public class Drivebase extends SubsystemBase {
     );
   }
 
-  // public Command followAutoCommand(String autoName) {
-  // return new PathPlannerAuto(autoName);
-  // }
+  public Command pathFindingThenFollowPath(String pathName, double maxVelocity, double maxAcceleration,
+      double maxAngularVelocity, double maxAngularAcceleration, double rotationDelayDistance) {
+    PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+    PathConstraints constraints = new PathConstraints(
+        maxVelocity, maxAcceleration,
+        Units.degreesToRadians(maxAngularVelocity), Units.degreesToRadians(maxAngularAcceleration));
+    return AutoBuilder.pathfindThenFollowPath(path, constraints, rotationDelayDistance);
+  }
 
   public Command followChoreoCommand(String choreoPathName) {
     PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(choreoPathName);
