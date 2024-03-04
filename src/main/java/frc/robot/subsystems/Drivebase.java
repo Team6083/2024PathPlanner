@@ -384,10 +384,10 @@ public class Drivebase extends SubsystemBase {
     frontRight.resetTurningEncoder();
   }
 
-  public void calculateShooterDegree(){
+  public double calculateShooterHeadingDegree(){
     double x = getPose2d().getX();
     double y = getPose2d().getY();
 
-    Math.atan2(Math.abs(x-0.45), Math.abs(y-5.55));
+    return Math.atan2(Math.abs(x-0.45), Math.abs(y-5.55));
   }
 }
